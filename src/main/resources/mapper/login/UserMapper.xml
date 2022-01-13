@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.bishe.mapper.login.UserMapper">
+
+<!--这是 连接 5 张表的sql语句，根据用户ID获取到该用户所拥有的权限，在这里写出来，但是不使用，因为效率不高-->
+    <select id="getUserPermissionsByUserId" parameterType="int" resultType="permission">
+        select url,perm
+            from user,user_role,role,role_permission,permission
+        where user.userid = user_role.userid
+            and user_role.roleid = role.roleid
+            and role.roleid = role_permission.roleid
+            and role_permission.permissionid = permission.permissionid
+            and user.userid=#{userid};
+    </select>
+
+    <!--查出一个用户所拥有的全部角色-->
+    <select id="getUserRoleByUserId" parameterType="int" resultType="role">
+        select role.roleid,role
+            from user,user_role,role
+        where user.userid = user_role.userid
+              and user_role.roleid = role.roleid
+              and user.userid = #{userId};
+    </select>
+
+    <insert id="add" parameterType="com.example.bishe.entity.login.User">
+        insert into user(username,password,salt,status)
+        VALUES
+            (#{user.username},#{user.password},#{user.salt},1);
+    </insert>
+</mapper>

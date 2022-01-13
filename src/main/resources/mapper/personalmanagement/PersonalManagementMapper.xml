@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.bishe.mapper.personalmanagement.PersonalManagementMapper">
+
+    <sql id="UserDetailList">
+        ID,JOB_NUMBER,DATE_OF_BIRTH,SEX,AGE,IDENTITY_CARD,WECHAT,REGISTERED_RESIDENCE,MOBILE_PHONE,EMAIL,HOME_ADDRESS,
+        EMERGENCY_CONTACT_PERSON,EMERGENCY_CONTACT_PHONE,ENTRY_DATE,DATE_OF_RESIGNATION,REMARK
+    </sql>
+
+    <select id="queryUserDetail" resultType="com.example.bishe.entity.personalmanagement.UserDetail">
+        select
+        <include refid="UserDetailList"/>
+        from user_detail ud
+        join user
+        WHERE ud.USER_ID = USER.userid
+        AND user.DELETED_FLAG = '1' and user.FREEZED_FLAG = '1'
+        <if test="userQueryCondition.jobNumber != null and userQueryCondition.jobNumber != ''">
+            AND JOB_NUMBER = #{ userQueryCondition.jobNumber }
+        </if>
+        <if test="userQueryCondition.sex != null and userQueryCondition.sex != ''">
+            AND SEX = #{ userQueryCondition.sex }
+        </if>
+        <if test="userQueryCondition.mobilePhone != null and userQueryCondition.mobilePhone != ''">
+            AND MOBILE_PHONE = #{ userQueryCondition.mobilePhone }
+        </if>
+    </select>
+
+    <select id="selectUserCount" resultType="java.lang.Integer">
+        select  count(*) count
+        from user_detail ud
+        join user
+        WHERE ud.USER_ID = USER.userid
+        AND user.DELETED_FLAG = '1' and user.FREEZED_FLAG = '1'
+        <if test="userQueryCondition.jobNumber != null and userQueryCondition.jobNumber != ''">
+            AND JOB_NUMBER = #{ userQueryCondition.jobNumber }
+        </if>
+        <if test="userQueryCondition.sex != null and userQueryCondition.sex != ''">
+            AND SEX = #{ userQueryCondition.sex }
+        </if>
+        <if test="userQueryCondition.mobilePhone != null and userQueryCondition.mobilePhone != ''">
+            AND MOBILE_PHONE = #{ userQueryCondition.mobilePhone }
+        </if>
+    </select>
+
+
+    <!--删除用户-->
+    <update id="deleteUserDetail">
+        UPDATE user
+        SET DELETED_FLAG = '0'
+        where userid = #{id}
+    </update>
+
+    <!--冻结用户-->
+    <update id="freezeUserDetail">
+        UPDATE user
+        SET FREEZED_FLAG = '0'
+        where userid = #{id}
+    </update>
+
+    <insert id="addUserDetail" parameterType="com.example.bishe.entity.personalmanagement.UserDetail">
+        insert into user_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test='userDetail.jobNumber != null and userDetail.jobNumber != "" '>
+                JOB_NUMBER,
+            </if>
+            <if test='userDetail.dateOfBirth != null '>
+                DATE_OF_BIRTH,
+            </if>
+            <if test='userDetail.sex != null and userDetail.sex != "" '>
+                SEX,
+            </if>
+            <if test='userDetail.age != null and userDetail.age != "" '>
+                AGE,
+            </if>
+            <if test='userDetail.identityCard != null and userDetail.identityCard != "" '>
+                IDENTITY_CARD,
+            </if>
+            <if test='userDetail.mobilePhone != null and userDetail.mobilePhone != "" '>
+                MOBILE_PHONE,
+            </if>
+            <if test='userDetail.emergencyContactPerson != null and userDetail.emergencyContactPerson != "" '>
+                EMERGENCY_CONTACT_PERSON,
+            </if>
+            <if test='userDetail.emergencyContactPhone != null and userDetail.emergencyContactPhone != "" '>
+                EMERGENCY_CONTACT_PHONE,
+            </if>
+            <if test='userDetail.userId != null and userDetail.userId != "" '>
+                USER_ID,
+            </if>
+            <if test='userDetail.registeredResidence != null and userDetail.registeredResidence != "" '>
+                REGISTERED_RESIDENCE,
+            </if>
+            <if test='userDetail.wechat != null and userDetail.wechat != "" '>
+                WECHAT,
+            </if>
+            <if test='userDetail.email != null and userDetail.email != "" '>
+                EMAIL,
+            </if>
+            <if test='userDetail.homeAddress != null and userDetail.homeAddress != "" '>
+                HOME_ADDRESS,
+            </if>
+            <if test='userDetail.entryDate != null '>
+                ENTRY_DATE,
+            </if>
+            <if test='userDetail.dateOfResignation != null '>
+                DATE_OF_RESIGNATION,
+            </if>
+            <if test='userDetail.remark != null and userDetail.remark != "" '>
+                REMARK,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test='userDetail.jobNumber != null and userDetail.jobNumber != "" '>
+                #{userDetail.jobNumber},
+            </if>
+            <if test='userDetail.dateOfBirth != null '>
+                #{userDetail.dateOfBirth},
+            </if>
+            <if test='userDetail.sex != null and userDetail.sex != "" '>
+                #{userDetail.sex},
+            </if>
+            <if test='userDetail.age != null and userDetail.age != "" '>
+                #{userDetail.age},
+            </if>
+            <if test='userDetail.identityCard != null and userDetail.identityCard != "" '>
+                #{userDetail.identityCard},
+            </if>
+            <if test='userDetail.mobilePhone != null and userDetail.mobilePhone != "" '>
+                #{userDetail.mobilePhone},
+            </if>
+            <if test='userDetail.emergencyContactPerson != null and userDetail.emergencyContactPerson != "" '>
+                #{userDetail.emergencyContactPerson},
+            </if>
+            <if test='userDetail.emergencyContactPhone != null and userDetail.emergencyContactPhone != "" '>
+                #{userDetail.emergencyContactPhone},
+            </if>
+            <if test='userDetail.userId != null and userDetail.userId != "" '>
+                #{userDetail.userId},
+            </if>
+            <if test='userDetail.registeredResidence != null and userDetail.registeredResidence != "" '>
+                #{userDetail.registeredResidence},
+            </if>
+            <if test='userDetail.wechat != null and userDetail.wechat != "" '>
+                #{userDetail.wechat},
+            </if>
+            <if test='userDetail.email != null and userDetail.email != "" '>
+                #{userDetail.email},
+            </if>
+            <if test='userDetail.homeAddress != null and userDetail.homeAddress != "" '>
+                #{userDetail.homeAddress},
+            </if>
+            <if test='userDetail.entryDate != null '>
+                #{userDetail.entryDate},
+            </if>
+            <if test='userDetail.dateOfResignation != null '>
+                #{userDetail.dateOfResignation},
+            </if>
+            <if test='userDetail.remark != null and userDetail.remark != "" '>
+                #{userDetail.remark},
+            </if>
+        </trim>
+    </insert>
+
+    <!--人员管理-修改用户详细信息-->
+    <update id="updateUserDetail" parameterType="com.example.bishe.entity.personalmanagement.UserDetail">
+        UPDATE user_detail
+        <trim prefix="set" suffixOverrides=",">
+            <if test='userDetail.jobNumber != null and userDetail.jobNumber != "" '>
+                JOB_NUMBER = #{userDetail.jobNumber},
+            </if>
+            <if test='userDetail.dateOfBirth != null '>
+                DATE_OF_BIRTH = #{userDetail.dateOfBirth},
+            </if>
+            <if test='userDetail.sex != null and userDetail.sex != "" '>
+                SEX = #{userDetail.sex},
+            </if>
+            <if test='userDetail.age != null and userDetail.age != "" '>
+                AGE = #{userDetail.age},
+            </if>
+            <if test='userDetail.identityCard != null and userDetail.identityCard != "" '>
+                IDENTITY_CARD = #{userDetail.identityCard},
+            </if>
+            <if test='userDetail.mobilePhone != null and userDetail.mobilePhone != "" '>
+                MOBILE_PHONE = #{userDetail.mobilePhone},
+            </if>
+            <if test='userDetail.emergencyContactPerson != null and userDetail.emergencyContactPerson != "" '>
+                EMERGENCY_CONTACT_PERSON = #{userDetail.emergencyContactPerson},
+            </if>
+            <if test='userDetail.emergencyContactPhone != null and userDetail.emergencyContactPhone != "" '>
+                EMERGENCY_CONTACT_PHONE = #{userDetail.emergencyContactPhone},
+            </if>
+            <if test='userDetail.userId != null and userDetail.userId != "" '>
+                USER_ID = #{userDetail.userId},
+            </if>
+            <if test='userDetail.registeredResidence != null and userDetail.registeredResidence != "" '>
+                REGISTERED_RESIDENCE = #{userDetail.registeredResidence},
+            </if>
+            <if test='userDetail.wechat != null and userDetail.wechat != "" '>
+                WECHAT = #{userDetail.wechat},
+            </if>
+            <if test='userDetail.email != null and userDetail.email != "" '>
+                EMAIL = #{userDetail.email},
+            </if>
+            <if test='userDetail.homeAddress != null and userDetail.homeAddress != "" '>
+                HOME_ADDRESS = #{userDetail.homeAddress},
+            </if>
+            <if test='userDetail.entryDate != null '>
+                ENTRY_DATE = #{userDetail.entryDate},
+            </if>
+            <if test='userDetail.dateOfResignation != null '>
+                DATE_OF_RESIGNATION = #{userDetail.dateOfResignation},
+            </if>
+            <if test='userDetail.remark != null and userDetail.remark != "" '>
+                REMARK = #{userDetail.remark},
+            </if>
+        </trim>
+        WHERE USER_ID=#{id}
+    </update>
+
+
+
+    <select id="judgeUserExistence" resultType="java.lang.Integer">
+        SELECT count(*) count
+        FROM user
+        WHERE DELETED_FLAG = '1' AND FREEZED_FLAG = '1'
+        <if test="id != null and id != ''">
+            AND userid = #{id}
+        </if>
+    </select>
+</mapper>

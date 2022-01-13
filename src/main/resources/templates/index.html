@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>index</title>
+    <script th:src="@{/js/jquery-3.6.0.slim.min.js}"></script>
+</head>
+<body>
+<a shiro:guest href="/toLogin">去登陆</a><br/>
+<button id="addBtn" shiro:hasPermission="user:add">去添加</button><br/>
+<button id="updateBtn" shiro:hasPermission="user:update">去更新</button><br/>
+<button id="deleteBtn" shiro:hasPermission="user:delete">去删除</button><br/>
+<a shiro:user href="/logout">退出当前用户</a>
+</body>
+<script>
+    $(function () {
+        let token = localStorage.getItem("token")
+        function myAjax(url){
+            $.ajax({
+                url: url,
+                headers: {
+                    "token": token
+                },
+                success: function (data) {
+                    console.log(data)
+                    window.location = data
+                },
+                error: function (data) {
+                    alert("error!")
+                }
+            })
+        }
+        $('#addBtn').click(function () {
+            myAjax("/toUserAdd")
+        })
+        $('#updateBtn').click(function () {
+            myAjax("/toUserUpdate")
+        })
+        $('#deleteBtn').click(function () {
+            myAjax("/toUserDelete")
+        })
+    })
+</script>
+</html>
