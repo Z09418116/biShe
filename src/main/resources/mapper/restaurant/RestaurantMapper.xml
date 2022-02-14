@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.bishe.mapper.restaurant.RestaurantMapper">
+
+    <sql id="RestaurantInfo">
+        ID,RESTAURANT_NAME,LEGAL_PERSON_NAME,LEGAL_PERSON_PHONE,ADDRESS,YEAR_CHECK_COUNT,YEAR_PASS_COUNT,ATTENTION,DATE_FORMAT( RECENT_CHECK_TIME,'%Y-%m-%d') RECENT_CHECK_TIME
+    </sql>
+
+    <select id="queryRestaurant" resultType="com.example.bishe.entity.restaurant.RestaurantInfo">
+        SELECT
+        <include refid="RestaurantInfo"/>
+        FROM restaurant
+        WHERE
+        DELETED_FLAG = '1' AND FREEZED_FLAG = '1'
+        <if test="restaurantQueryCondition.restaurantName!= null and restaurantQueryCondition.restaurantName != ''">
+            AND RESTAURANT_NAME LIKE CONCAT(CONCAT('%', #{restaurantQueryCondition.restaurantName}), '%')
+        </if>
+        <if test="restaurantQueryCondition.address != null and restaurantQueryCondition.address != ''">
+            AND ADDRESS LIKE CONCAT(CONCAT('%', #{restaurantQueryCondition.address}), '%')
+        </if>
+        <if test="restaurantQueryCondition.minCheckCount != null and restaurantQueryCondition.minCheckCount != ''
+        and restaurantQueryCondition.maxCheckCount != null and restaurantQueryCondition.maxCheckCount != ''">
+            AND YEAR_CHECK_COUNT BETWEEN restaurantQueryCondition.minCheckCount AND restaurantQueryCondition.maxCheckCount
+        </if>
+        ORDER BY RESTAURANT_NAME DESC
+        <if test="restaurantQueryCondition.start != null and restaurantQueryCondition.limit != null and restaurantQueryCondition.limit > 0">
+            limit #{restaurantQueryCondition.start},#{restaurantQueryCondition.limit}
+        </if>
+    </select>
+
+    <select id="queryRestaurantCount" resultType="java.lang.Integer">
+        SELECT
+        count(*)
+        FROM restaurant
+        WHERE
+        DELETED_FLAG = '1' AND FREEZED_FLAG = '1'
+        <if test="restaurantQueryCondition.restaurantName!= null and restaurantQueryCondition.restaurantName != ''">
+            AND RESTAURANT_NAME LIKE CONCAT(CONCAT('%', #{restaurantQueryCondition.restaurantName}), '%')
+        </if>
+        <if test="restaurantQueryCondition.address != null and restaurantQueryCondition.address != ''">
+            AND ADDRESS LIKE CONCAT(CONCAT('%', #{restaurantQueryCondition.address}), '%')
+        </if>
+        <if test="restaurantQueryCondition.minCheckCount != null and restaurantQueryCondition.minCheckCount != ''
+        and restaurantQueryCondition.maxCheckCount != null and restaurantQueryCondition.maxCheckCount != ''">
+            AND YEAR_CHECK_COUNT BETWEEN restaurantQueryCondition.minCheckCount AND restaurantQueryCondition.maxCheckCount
+        </if>
+        ORDER BY RESTAURANT_NAME DESC
+        <if test="restaurantQueryCondition.start != null and restaurantQueryCondition.limit != null and restaurantQueryCondition.limit > 0">
+            limit #{restaurantQueryCondition.start},#{restaurantQueryCondition.limit}
+        </if>
+    </select>
+
+    <select id="judgeRestaurantExistence" resultType="java.lang.Integer">
+        SELECT count(*) count
+        FROM restaurant
+        WHERE DELETED_FLAG = '1' AND FREEZED_FLAG = '1'
+        <if test="id != null and id != ''">
+            AND ID = #{id}
+        </if>
+    </select>
+
+    <insert id="addRestaurant" parameterType="com.example.bishe.entity.restaurant.RestaurantInfo">
+        insert into restaurant
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test='restaurantInfo.restaurantName != null and restaurantInfo.restaurantName != "" '>
+                RESTAURANT_NAME,
+            </if>
+            <if test='restaurantInfo.restaurantName != null and restaurantInfo.restaurantName != "" '>
+                LEGAL_PERSON_NAME,
+            </if>
+            <if test='restaurantInfo.restaurantName != null and restaurantInfo.restaurantName != "" '>
+                LEGAL_PERSON_PHONE,
+            </if>
+            <if test='restaurantInfo.restaurantName != null and restaurantInfo.restaurantName != "" '>
+                ADDRESS,
+            </if>
+            <if test='restaurantInfo.restaurantName != null and restaurantInfo.restaurantName != "" '>
+                YEAR_CHECK_COUNT,
+            </if>
+            <if test='restaurantInfo.restaurantName != null and restaurantInfo.restaurantName != "" '>
+                YEAR_PASS_COUNT,
+            </if>
+            <if test='restaurantInfo.restaurantName != null and restaurantInfo.restaurantName != "" '>
+                ATTENTION,
+            </if>
+            <if test='restaurantInfo.recentCheckTime != null and restaurantInfo.recentCheckTime != "" '>
+                RECENT_CHECK_TIME,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test='restaurantInfo.restaurantName != null and restaurantInfo.restaurantName != "" '>
+                #{restaurantInfo.restaurantName},
+            </if>
+            <if test='restaurantInfo.restaurantName != null and restaurantInfo.restaurantName != "" '>
+                #{restaurantInfo.legalPersonName},
+            </if>
+            <if test='restaurantInfo.restaurantName != null and restaurantInfo.restaurantName != "" '>
+                #{restaurantInfo.legalPersonPhone},
+            </if>
+            <if test='restaurantInfo.restaurantName != null and restaurantInfo.restaurantName != "" '>
+                #{restaurantInfo.address},
+            </if>
+            <if test='restaurantInfo.restaurantName != null and restaurantInfo.restaurantName != "" '>
+                #{restaurantInfo.yearCheckCount},
+            </if>
+            <if test='restaurantInfo.restaurantName != null and restaurantInfo.restaurantName != "" '>
+                #{restaurantInfo.yearPassCount},
+            </if>
+            <if test='restaurantInfo.restaurantName != null and restaurantInfo.restaurantName != "" '>
+                #{restaurantInfo.attention},
+            </if>
+            <if test='restaurantInfo.recentCheckTime != null and restaurantInfo.recentCheckTime != "" '>
+                #{restaurantInfo.recentCheckTime},
+            </if>
+        </trim>
+    </insert>
+
+    <!--餐馆信息-修改用户详细信息-->
+    <update id="updateRestaurant" parameterType="com.example.bishe.entity.restaurant.RestaurantInfo">
+        UPDATE restaurant
+        <trim prefix="set" suffixOverrides=",">
+            <if test='restaurantInfo.restaurantName != null and restaurantInfo.restaurantName != "" '>
+                RESTAURANT_NAME = #{restaurantInfo.restaurantName},
+            </if>
+            <if test='restaurantInfo.restaurantName != null and restaurantInfo.restaurantName != "" '>
+                LEGAL_PERSON_NAME = #{restaurantInfo.legalPersonName},
+            </if>
+            <if test='restaurantInfo.restaurantName != null and restaurantInfo.restaurantName != "" '>
+                LEGAL_PERSON_PHONE = #{restaurantInfo.legalPersonPhone},
+            </if>
+            <if test='restaurantInfo.restaurantName != null and restaurantInfo.restaurantName != "" '>
+                ADDRESS = #{restaurantInfo.address},
+            </if>
+            <if test='restaurantInfo.restaurantName != null and restaurantInfo.restaurantName != "" '>
+                YEAR_CHECK_COUNT = #{restaurantInfo.yearCheckCount},
+            </if>
+            <if test='restaurantInfo.restaurantName != null and restaurantInfo.restaurantName != "" '>
+                YEAR_PASS_COUNT = #{restaurantInfo.yearPassCount},
+            </if>
+            <if test='restaurantInfo.restaurantName != null and restaurantInfo.restaurantName != "" '>
+                ATTENTION = #{restaurantInfo.attention},
+            </if>
+            <if test='restaurantInfo.recentCheckTime != null and restaurantInfo.recentCheckTime != "" '>
+                RECENT_CHECK_TIME = #{restaurantInfo.recentCheckTime},
+            </if>
+        </trim>
+        WHERE ID=#{id}
+    </update>
+
+    <!--删除餐馆信息-->
+    <update id="deleteRestaurant" >
+        UPDATE restaurant
+        SET DELETED_FLAG = '0'
+        where ID = #{id}
+    </update>
+
+    <!--删除餐馆信息-->
+    <update id="freezeRestaurant" >
+        UPDATE restaurant
+        SET FREEZED_FLAG = '0'
+        where ID = #{id}
+    </update>
+
+    <select id="extractRestaurant" resultType="com.example.bishe.entity.restaurant.RestaurantInfo">
+        SELECT
+        <include refid="RestaurantInfo"/>
+        FROM restaurant
+        WHERE
+        DELETED_FLAG = '1' AND FREEZED_FLAG = '1'
+        order by rand() limit 1;
+    </select>
+</mapper>

@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.bishe.mapper.caseinfo.CaseInfoMapper">
+
+    <sql id="CaseInfo">
+        ID,CASE_NUMBER,RESTAURANT_NAME,LEGAL_PERSON_NAME,LEGAL_PERSON_PHONE,ADDRESS,LAW_ENFORCER_LEADER,LAW_ENFORCER,
+        DATE_FORMAT( LAW_ENFORCEMENT_TIME,'%Y-%m-%d') LAW_ENFORCEMENT_TIME,INSPECT_RESULT,IS_PASS,RECTIFICATION_OPINIONS
+    </sql>
+
+    <select id="queryCaseInfo" resultType="com.example.bishe.entity.caseinfo.CaseInfo">
+        SELECT
+        <include refid="CaseInfo"/>
+        FROM caseinfo
+        WHERE
+        DELETED_FLAG = '1' AND FREEZED_FLAG = '1'
+        <if test="caseQueryCondition.caseNumber != null and caseQueryCondition.caseNumber != ''">
+            AND CASE_NUMBER LIKE CONCAT(CONCAT('%', #{caseQueryCondition.caseNumber}), '%')
+        </if>
+        <if test="caseQueryCondition.restaurantName != null and caseQueryCondition.restaurantName != ''">
+            AND RESTAURANT_NAME LIKE CONCAT(CONCAT('%', #{caseQueryCondition.restaurantName}), '%')
+        </if>
+        <if test="caseQueryCondition.startTime != null and caseQueryCondition.startTime != ''">
+            AND DATE_FORMAT(LAW_ENFORCEMENT_TIME,'%Y-%m-%d') >= #{caseQueryCondition.startTime}
+        </if>
+        <if test="caseQueryCondition.endTime != null  and caseQueryCondition.endTime != ''">
+            AND #{caseQueryCondition.endTime} >= DATE_FORMAT(LAW_ENFORCEMENT_TIME,'%Y-%m-%d')
+        </if>
+        ORDER BY LAW_ENFORCEMENT_TIME DESC
+        <if test="caseQueryCondition.start != null and caseQueryCondition.limit != null and caseQueryCondition.limit > 0">
+            limit #{caseQueryCondition.start},#{caseQueryCondition.limit}
+        </if>
+    </select>
+
+    <select id="queryCaseInfoCount" resultType="java.lang.Integer">
+        SELECT
+        count(*)
+        FROM caseinfo
+        WHERE
+        DELETED_FLAG = '1' AND FREEZED_FLAG = '1'
+        <if test="caseQueryCondition.caseNumber != null and caseQueryCondition.caseNumber != ''">
+            AND CASE_NUMBER LIKE CONCAT(CONCAT('%', #{caseQueryCondition.caseNumber}), '%')
+        </if>
+        <if test="caseQueryCondition.restaurantName != null and caseQueryCondition.restaurantName != ''">
+            AND RESTAURANT_NAME LIKE CONCAT(CONCAT('%', #{caseQueryCondition.restaurantName}), '%')
+        </if>
+        <if test="caseQueryCondition.startTime != null and caseQueryCondition.startTime != ''">
+            AND DATE_FORMAT(LAW_ENFORCEMENT_TIME,'%Y-%m-%d') >= #{caseQueryCondition.startTime}
+        </if>
+        <if test="caseQueryCondition.endTime != null  and caseQueryCondition.endTime != ''">
+            AND #{caseQueryCondition.endTime} >= DATE_FORMAT(LAW_ENFORCEMENT_TIME,'%Y-%m-%d')
+        </if>
+        ORDER BY LAW_ENFORCEMENT_TIME DESC
+        <if test="caseQueryCondition.start != null and caseQueryCondition.limit != null and caseQueryCondition.limit > 0">
+            limit #{caseQueryCondition.start},#{caseQueryCondition.limit}
+        </if>
+    </select>
+
+    <select id="judgeCaseInfoExistence" resultType="java.lang.Integer">
+        SELECT count(*) count
+        FROM caseinfo
+        WHERE DELETED_FLAG = '1' AND FREEZED_FLAG = '1'
+        <if test="id != null and id != ''">
+            AND ID = #{id}
+        </if>
+    </select>
+
+    <insert id="addCaseInfo" useGeneratedKeys="true" keyProperty="id" parameterType="com.example.bishe.entity.caseinfo.CaseInfo">
+        insert into caseinfo
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test='caseInfo.caseNumber != null and caseInfo.caseNumber != "" '>
+                CASE_NUMBER,
+            </if>
+            <if test='caseInfo.restaurantName != null and caseInfo.restaurantName != "" '>
+                RESTAURANT_NAME,
+            </if>
+            <if test='caseInfo.legalPersonName != null and caseInfo.legalPersonName != "" '>
+                LEGAL_PERSON_NAME,
+            </if>
+            <if test='caseInfo.legalPersonPhone != null and caseInfo.legalPersonPhone != "" '>
+                LEGAL_PERSON_PHONE,
+            </if>
+            <if test='caseInfo.address != null and caseInfo.address != "" '>
+                ADDRESS,
+            </if>
+            <if test='caseInfo.lawEnforcerLeader != null and caseInfo.lawEnforcerLeader != "" '>
+                LAW_ENFORCER_LEADER,
+            </if>
+            <if test='caseInfo.lawEnforcer != null and caseInfo.lawEnforcer != "" '>
+                LAW_ENFORCER,
+            </if>
+            <if test='caseInfo.lawEnforcementTime != null and caseInfo.lawEnforcementTime != "" '>
+                LAW_ENFORCEMENT_TIME,
+            </if>
+            <if test='caseInfo.inspectResult != null and caseInfo.inspectResult != "" '>
+                INSPECT_RESULT,
+            </if>
+            <if test='caseInfo.isPass != null and caseInfo.isPass != "" '>
+                IS_PASS,
+            </if>
+            <if test='caseInfo.rectificationOpinions != null and caseInfo.rectificationOpinions != "" '>
+                RECTIFICATION_OPINIONS,
+            </if>
+            <if test='caseInfo.caseState != null and caseInfo.caseState != "" '>
+                CASE_STATE,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test='caseInfo.caseNumber != null and caseInfo.caseNumber != "" '>
+                #{caseInfo.caseNumber},
+            </if>
+            <if test='caseInfo.restaurantName != null and caseInfo.restaurantName != "" '>
+                #{caseInfo.restaurantName},
+            </if>
+            <if test='caseInfo.legalPersonName != null and caseInfo.legalPersonName != "" '>
+                #{caseInfo.legalPersonName},
+            </if>
+            <if test='caseInfo.legalPersonPhone != null and caseInfo.legalPersonPhone != "" '>
+                #{caseInfo.legalPersonPhone},
+            </if>
+            <if test='caseInfo.address != null and caseInfo.address != "" '>
+                #{caseInfo.address},
+            </if>
+            <if test='caseInfo.lawEnforcerLeader != null and caseInfo.lawEnforcerLeader != "" '>
+                #{caseInfo.lawEnforcerLeader},
+            </if>
+            <if test='caseInfo.lawEnforcer != null and caseInfo.lawEnforcer != "" '>
+                #{caseInfo.lawEnforcer},
+            </if>
+            <if test='caseInfo.lawEnforcementTime != null and caseInfo.lawEnforcementTime != "" '>
+                #{caseInfo.lawEnforcementTime},
+            </if>
+            <if test='caseInfo.inspectResult != null and caseInfo.inspectResult != "" '>
+                #{caseInfo.inspectResult},
+            </if>
+            <if test='caseInfo.isPass != null and caseInfo.isPass != "" '>
+                #{caseInfo.isPass},
+            </if>
+            <if test='caseInfo.rectificationOpinions != null and caseInfo.rectificationOpinions != "" '>
+                #{caseInfo.rectificationOpinions},
+            </if>
+            <if test='caseInfo.caseState != null and caseInfo.caseState != "" '>
+                #{caseInfo.caseState},
+            </if>
+        </trim>
+    </insert>
+
+    <!--案件信息-修改案件详细信息-->
+    <update id="updateCaseInfo" parameterType="com.example.bishe.entity.caseinfo.CaseInfo">
+        UPDATE caseinfo
+        <trim prefix="set" suffixOverrides=",">
+            <if test='caseInfo.caseNumber != null and caseInfo.caseNumber != "" '>
+                CASE_NUMBER = #{caseInfo.caseNumber},
+            </if>
+            <if test='caseInfo.restaurantName != null and caseInfo.restaurantName != "" '>
+                RESTAURANT_NAME = #{caseInfo.restaurantName},
+            </if>
+            <if test='caseInfo.legalPersonName != null and caseInfo.legalPersonName != "" '>
+                LEGAL_PERSON_NAME = #{caseInfo.legalPersonName},
+            </if>
+            <if test='caseInfo.legalPersonPhone != null and caseInfo.legalPersonPhone != "" '>
+                LEGAL_PERSON_PHONE = #{caseInfo.legalPersonPhone},
+            </if>
+            <if test='caseInfo.address != null and caseInfo.address != "" '>
+                ADDRESS = #{caseInfo.address},
+            </if>
+            <if test='caseInfo.lawEnforcerLeader != null and caseInfo.lawEnforcerLeader != "" '>
+                LAW_ENFORCER_LEADER = #{caseInfo.lawEnforcerLeader},
+            </if>
+            <if test='caseInfo.lawEnforcer != null and caseInfo.lawEnforcer != "" '>
+                LAW_ENFORCER = #{caseInfo.lawEnforcer},
+            </if>
+            <if test='caseInfo.lawEnforcementTime != null and caseInfo.lawEnforcementTime != "" '>
+                LAW_ENFORCEMENT_TIME = #{caseInfo.lawEnforcementTime},
+            </if>
+            <if test='caseInfo.inspectResult != null and caseInfo.inspectResult != "" '>
+                INSPECT_RESULT = #{caseInfo.inspectResult},
+            </if>
+            <if test='caseInfo.isPass != null and caseInfo.isPass != "" '>
+                IS_PASS = #{caseInfo.isPass},
+            </if>
+            <if test='caseInfo.rectificationOpinions != null and caseInfo.rectificationOpinions != "" '>
+                RECTIFICATION_OPINIONS = #{caseInfo.rectificationOpinions},
+            </if>
+            <if test='caseInfo.caseState != null and caseInfo.caseState != "" '>
+                CASE_STATE = #{caseInfo.caseState},
+            </if>
+        </trim>
+        WHERE ID=#{id}
+    </update>
+
+    <!--删除案件信息-->
+    <update id="deleteCaseInfo" >
+        UPDATE caseinfo
+        SET DELETED_FLAG = '0'
+        where ID = #{id}
+    </update>
+
+    <!--删除案件信息-->
+    <update id="freezeCaseInfo" >
+        UPDATE caseinfo
+        SET FREEZED_FLAG = '0'
+        where ID = #{id}
+    </update>
+
+    <insert id="addCaseInfoEnclosure">
+        insert into case_enclosure
+        (
+        CASE_ID,FILE_NAME,FILE_URL
+        )
+        values
+        <foreach collection="caseInfoEnclosureList" item="item" separator=",">
+            (
+            #{ caseInfoId },#{ item.fileName },#{ item.fileUrl}
+            )
+        </foreach>
+    </insert>
+
+    <!--清除所有关联图片附件-->
+    <update id="cleanCaseInfoEnclosure">
+        update case_enclosure set
+            DELETED_FLAG ='0'
+        where DELETED_FLAG = '1' and CASE_ID = #{ id }
+    </update>
+
+
+
+</mapper>

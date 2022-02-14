@@ -45,7 +45,7 @@ public class UserRealm extends AuthorizingRealm {
         if(ObjectUtils.isEmpty(user)) {
             return null;
         }
-        return new SimpleAuthenticationInfo(user.getUsername(),user.getPassword(), new com.example.bishe.shiro.MyByteSource(user.getSalt()),this.getName());
+        return new SimpleAuthenticationInfo(user.getUsername(),user.getPassword(), new MyByteSource(user.getSalt()),this.getName());
     }
 
 }

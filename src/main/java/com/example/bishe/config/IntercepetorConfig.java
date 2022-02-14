@@ -11,6 +11,6 @@ public class IntercepetorConfig implements WebMvcConfigurer{
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new JWTIntercepetor())
                 .addPathPatterns("/**") //拦截所有请求
-                .excludePathPatterns("/logout","/js/**","/index","/getAuthCode","/login","/toLogin","/user/**"); // 放行 登陆请求 下面的所有请求
+                .excludePathPatterns("/logout","/js/**","/index","/getAuthCode","/login","/toLogin","/user/**","/restaurant/**","/caseinfo/**","/swagger-ui.html/**"); // 放行 登陆请求 下面的所有请求
     }
 }

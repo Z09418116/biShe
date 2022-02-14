@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class AbstractPaginationQueryCondition {
-    private Double start;
-    private Double limit;
-    private Double page;
+    private Integer start;
+    private Integer limit;
+    private Integer page;
 }

@@ -19,6 +19,11 @@ public class UserDetail {
     private Long id;
 
     /**
+     * 用户名称
+     */
+    private String userName;
+
+    /**
      * 工号
      */
     private String jobNumber;

@@ -4,7 +4,7 @@
 
     <sql id="UserDetailList">
         ID,JOB_NUMBER,DATE_OF_BIRTH,SEX,AGE,IDENTITY_CARD,WECHAT,REGISTERED_RESIDENCE,MOBILE_PHONE,EMAIL,HOME_ADDRESS,
-        EMERGENCY_CONTACT_PERSON,EMERGENCY_CONTACT_PHONE,ENTRY_DATE,DATE_OF_RESIGNATION,REMARK
+        EMERGENCY_CONTACT_PERSON,EMERGENCY_CONTACT_PHONE,ENTRY_DATE,DATE_OF_RESIGNATION,REMARK,USER_NAME
     </sql>
 
     <select id="queryUserDetail" resultType="com.example.bishe.entity.personalmanagement.UserDetail">
@@ -15,13 +15,17 @@
         WHERE ud.USER_ID = USER.userid
         AND user.DELETED_FLAG = '1' and user.FREEZED_FLAG = '1'
         <if test="userQueryCondition.jobNumber != null and userQueryCondition.jobNumber != ''">
-            AND JOB_NUMBER = #{ userQueryCondition.jobNumber }
+            AND ud.JOB_NUMBER LIKE CONCAT(CONCAT('%', #{userQueryCondition.jobNumber}), '%')
         </if>
-        <if test="userQueryCondition.sex != null and userQueryCondition.sex != ''">
-            AND SEX = #{ userQueryCondition.sex }
+        <if test="userQueryCondition.userName != null and userQueryCondition.userName != ''">
+            AND ud.USER_NAME = #{ userQueryCondition.userName }
         </if>
         <if test="userQueryCondition.mobilePhone != null and userQueryCondition.mobilePhone != ''">
-            AND MOBILE_PHONE = #{ userQueryCondition.mobilePhone }
+            AND ud.MOBILE_PHONE LIKE CONCAT(CONCAT('%', #{userQueryCondition.mobilePhone}), '%')
+        </if>
+        ORDER BY ud.JOB_NUMBER DESC
+        <if test="userQueryCondition.start != null and userQueryCondition.limit != null and userQueryCondition.limit > 0">
+            limit #{userQueryCondition.start},#{userQueryCondition.limit}
         </if>
     </select>
 
@@ -32,13 +36,13 @@
         WHERE ud.USER_ID = USER.userid
         AND user.DELETED_FLAG = '1' and user.FREEZED_FLAG = '1'
         <if test="userQueryCondition.jobNumber != null and userQueryCondition.jobNumber != ''">
-            AND JOB_NUMBER = #{ userQueryCondition.jobNumber }
+            AND ud.JOB_NUMBER LIKE CONCAT(CONCAT('%', #{userQueryCondition.jobNumber}), '%')
         </if>
-        <if test="userQueryCondition.sex != null and userQueryCondition.sex != ''">
-            AND SEX = #{ userQueryCondition.sex }
+        <if test="userQueryCondition.userName != null and userQueryCondition.userName != ''">
+            AND ud.USER_NAME = #{ userQueryCondition.userName }
         </if>
         <if test="userQueryCondition.mobilePhone != null and userQueryCondition.mobilePhone != ''">
-            AND MOBILE_PHONE = #{ userQueryCondition.mobilePhone }
+            AND ud.MOBILE_PHONE LIKE CONCAT(CONCAT('%', #{userQueryCondition.mobilePhone}), '%')
         </if>
     </select>
 
@@ -60,6 +64,9 @@
     <insert id="addUserDetail" parameterType="com.example.bishe.entity.personalmanagement.UserDetail">
         insert into user_detail
         <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test='userDetail.userName != null and userDetail.userName != "" '>
+                USER_NAME,
+            </if>
             <if test='userDetail.jobNumber != null and userDetail.jobNumber != "" '>
                 JOB_NUMBER,
             </if>
@@ -110,6 +117,9 @@
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test='userDetail.userName != null and userDetail.userName != "" '>
+                #{userDetail.userName},
+            </if>
             <if test='userDetail.jobNumber != null and userDetail.jobNumber != "" '>
                 #{userDetail.jobNumber},
             </if>
@@ -167,6 +177,9 @@
         <trim prefix="set" suffixOverrides=",">
             <if test='userDetail.jobNumber != null and userDetail.jobNumber != "" '>
                 JOB_NUMBER = #{userDetail.jobNumber},
+            </if>
+            <if test='userDetail.userName != null and userDetail.userName != "" '>
+                USER_NAME = #{userDetail.userName},
             </if>
             <if test='userDetail.dateOfBirth != null '>
                 DATE_OF_BIRTH = #{userDetail.dateOfBirth},
@@ -226,5 +239,35 @@
         <if test="id != null and id != ''">
             AND userid = #{id}
         </if>
+    </select>
+
+
+    <select id="queryUserDetailTest" resultType="com.example.bishe.entity.personalmanagement.UserDetail">
+        select
+        <include refid="UserDetailList"/>
+        from user_detail ud
+        join user
+        WHERE ud.USER_ID = USER.userid
+        AND user.DELETED_FLAG = '1' and user.FREEZED_FLAG = '1'
+
+    </select>
+
+    <select id="selectUserCountTest" resultType="java.lang.Integer">
+        select  count(*) count
+        from user_detail ud
+        join user
+        WHERE ud.USER_ID = USER.userid
+        AND user.DELETED_FLAG = '1' and user.FREEZED_FLAG = '1'
+
+    </select>
+
+    <select id="extractUser" resultType="com.example.bishe.entity.personalmanagement.UserDetail">
+        select
+        <include refid="UserDetailList"/>
+        from user_detail ud
+        join user
+        WHERE ud.USER_ID = USER.userid
+        AND user.DELETED_FLAG = '1' and user.FREEZED_FLAG = '1'
+        order by rand() limit 1;
     </select>
 </mapper>

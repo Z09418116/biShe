@@ -96,4 +96,16 @@ public class PersonalManagementController {
         return vo;
     }
 
+    /**
+     * 根据条件查询用户信息管理记录
+     */
+    @PostMapping("/queryTest")
+    @ResponseBody
+    public PagedQueryResult<UserDetail> queryUserTest() {
+        LOGGER.info("开始根据条件查询用户详细信息-ServiceImpl");
+
+        return personalManagementServiceImpl.queryUserTest();
+
+    }
+
 }

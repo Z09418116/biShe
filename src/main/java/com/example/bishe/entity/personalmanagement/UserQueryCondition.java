@@ -11,9 +11,9 @@ public class UserQueryCondition extends AbstractPaginationQueryCondition {
     private String jobNumber;
 
     /**
-     * 性别
+     * 用户名称
      */
-    private String sex;
+    private String userName;
 
     /**
      * 手机号码

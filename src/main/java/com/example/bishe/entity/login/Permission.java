@@ -20,7 +20,6 @@ import java.io.Serializable;
 public class Permission implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
     @TableId(value = "permissionid", type = IdType.AUTO)
     private Integer permissionid;
     private String url; //接口路径

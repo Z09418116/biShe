@@ -39,7 +39,7 @@ public class PersonalManagementServiceImpl implements PersonalManagementService 
 
         final PagedQueryResult<UserDetail> pagedQueryResult = new PagedQueryResult<>();
 
-        //查询符合条件的暂扣物品管理记录数量
+        //查询符合条件的数量
         final Integer count = personalManagementMapper.selectUserCount(userQueryCondition);
 
         //有记录则查询
@@ -62,21 +62,16 @@ public class PersonalManagementServiceImpl implements PersonalManagementService 
     @Override
     public ReturnInfo addUserDetail(UserDetail userDetail) {
         final ReturnInfo returnInfo = new ReturnInfo();
-
-        System.out.println("LONG_ZERO"+NUM_ONE);
-        System.out.println(personalManagementMapper.judgeUserExistence(userDetail.getUserId()));
-        System.out.println("tauur:  "+NUM_ONE.equals(personalManagementMapper.judgeUserExistence(userDetail.getUserId())));
         if (NUM_ONE.equals(personalManagementMapper.judgeUserExistence(userDetail.getUserId()))){
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("人员管理-修改详细用户信息-impl,id:{}");
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("人员管理-修改详细用户信息-impl,id:{}");
             }
             //修改用户详细信息
             Long id = userDetail.getUserId();
             returnInfo.setSuccess(personalManagementMapper.updateUserDetail(userDetail,id));
-
         }else {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("人员管理-添加详细用户信息-impl,id:{}");
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("人员管理-添加详细用户信息-impl,id:{}");
             }
             //添加用户详细信息
             returnInfo.setSuccess(personalManagementMapper.addUserDetail(userDetail));
@@ -119,5 +114,34 @@ public class PersonalManagementServiceImpl implements PersonalManagementService 
     }
 
 
+
+    @Override
+    public PagedQueryResult<UserDetail> queryUserTest() {
+        LOGGER.info("开始根据条件查询用户详细信息-ServiceImpl");
+
+        final PagedQueryResult<UserDetail> pagedQueryResult = new PagedQueryResult<>();
+
+        //查询符合条件的记录数量
+        final Integer count = personalManagementMapper.selectUserCountTest();
+
+        //有记录则查询
+        if (count != null && !NUM_ZERO.equals(count)) {
+            pagedQueryResult.setTotalCount(count);
+            pagedQueryResult.setResults(personalManagementMapper.queryUserDetailTest());
+        } else {
+            pagedQueryResult.setTotalCount(NUM_ZERO);
+            pagedQueryResult.setResults(Lists.newArrayList());
+        }
+        return pagedQueryResult;
+    }
+
+    /**
+     * 双随机-随机抽取检查检查人员和餐馆
+     *
+     * restaurantInfo 餐馆信息
+     */
+    public UserDetail extractUser(){
+        return personalManagementMapper.extractUser();
+    }
 
 }

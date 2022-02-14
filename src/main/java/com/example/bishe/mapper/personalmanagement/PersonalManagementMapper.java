@@ -12,16 +12,16 @@ import java.util.List;
 public interface PersonalManagementMapper {
 
     /**
-     * 根据条件查询查询用户具体信息
+     * 根据条件查询用户具体信息
      *
      * @return 用户具体信息实体类集合
      */
     List<UserDetail> queryUserDetail(@Param("userQueryCondition") UserQueryCondition userQueryCondition);
 
     /**
-     * 根据条件查询查询用户具体信息数量
+     * 根据条件查询用户具体信息数量
      *
-     * @param userQueryCondition 查询条件实体类 包含 工号 性别 手机号码
+     * @param userQueryCondition 查询条件实体类 包含 工号 用户姓名 手机号码
      * @return 符合查询条件的记录数量
      */
     Integer selectUserCount(@Param("userQueryCondition") UserQueryCondition userQueryCondition);
@@ -65,5 +65,28 @@ public interface PersonalManagementMapper {
      * @Param id 用户id
      */
     Boolean freezeUserDetail(@Param("id") Long id);
+
+
+    /**
+     * 根据条件查询用户具体信息
+     *
+     * @return 用户具体信息实体类集合
+     */
+    List<UserDetail> queryUserDetailTest();
+
+    /**
+     * 根据条件查询用户具体信息数量
+     *
+     * @param
+     * @return 符合查询条件的记录数量
+     */
+    Integer selectUserCountTest();
+
+    /**
+     * 双随机-随机抽取检查检查人员和餐馆
+     *
+     * restaurantInfo 餐馆信息
+     */
+    UserDetail extractUser();
 
 }
