@@ -201,15 +201,24 @@ public class CaseInfoServiceImpl implements CaseInfoService {
         return returnInfo;
     }
 
+    /**
+     * 修改案件状态
+     *
+     * @param id 案件id status 案件状态(1-通过 2-不通过)
+     * @return 是否成功
+     */
     @Override
-    public Boolean modifyCaseInfo(Long id, Integer state) {
-        return null;
+    public ReturnInfo changeCaseInfoStatus(Long id, Integer state) {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("案件信息-修改案件状态-impl,id:{}",id);
+        }
+        final ReturnInfo returnInfo = new ReturnInfo();
+        //冻结案件信息
+        returnInfo.setSuccess(caseInfoMapper.changeCaseInfoStatus(id,state));
+        return returnInfo;
     }
 
-    @Override
-    public ReturnInfo importCaseInfo(List<RestaurantInfo> restaurantInfoList) {
-        return null;
-    }
+
 
     @Override
     public ReturnInfo uploadEnclosure(MultipartFile attachFile) {

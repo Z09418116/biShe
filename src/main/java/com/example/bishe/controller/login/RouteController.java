@@ -2,7 +2,6 @@ package com.example.bishe.controller.login;
 
 
 import com.example.bishe.service.login.UserService;
-import com.example.bishe.utils.CpachaUtil;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -63,19 +62,6 @@ public class RouteController {
         return userService.logout();
     }
 
-    @GetMapping("/getAuthCode")
-    public void getAuthCode(HttpSession session, HttpServletResponse response){
-        CpachaUtil cpachaUtil = new CpachaUtil();
-        String code = cpachaUtil.generatorVCode();
-        session.setAttribute("code",code);
-        BufferedImage bufferedImage = cpachaUtil.generatorVCodeImage(code, true);
-        response.setContentType("image/png");
-        try {
-            OutputStream outputStream = response.getOutputStream();
-            ImageIO.write(bufferedImage,"png",outputStream);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+
 
 }

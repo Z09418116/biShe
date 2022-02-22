@@ -6,25 +6,25 @@
     <select id="getUserPermissionsByUserId" parameterType="int" resultType="permission">
         select url,perm
             from user,user_role,role,role_permission,permission
-        where user.userid = user_role.userid
+        where user.id = user_role.userid
             and user_role.roleid = role.roleid
             and role.roleid = role_permission.roleid
             and role_permission.permissionid = permission.permissionid
-            and user.userid=#{userid};
+            and user.id=#{userid};
     </select>
 
     <!--查出一个用户所拥有的全部角色-->
     <select id="getUserRoleByUserId" parameterType="int" resultType="role">
         select role.roleid,role
             from user,user_role,role
-        where user.userid = user_role.userid
+        where user.id = user_role.userid
               and user_role.roleid = role.roleid
-              and user.userid = #{userId};
+              and user.id = #{userId};
     </select>
 
     <insert id="add" parameterType="com.example.bishe.entity.login.User">
-        insert into user(username,password,salt,status)
+        insert into user(jobNumber,password,salt)
         VALUES
-            (#{user.username},#{user.password},#{user.salt},1);
+            (#{user.jobNumber},#{user.password},#{user.salt});
     </insert>
 </mapper>

@@ -2,9 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.bishe.mapper.personalmanagement.PersonalManagementMapper">
 
+    <select id="getMaxJobNumber" resultType="java.lang.Integer">
+        SELECT MAX(JOB_NUMBER) jobNumber from user
+    </select>
+
+
     <sql id="UserDetailList">
-        ID,JOB_NUMBER,DATE_OF_BIRTH,SEX,AGE,IDENTITY_CARD,WECHAT,REGISTERED_RESIDENCE,MOBILE_PHONE,EMAIL,HOME_ADDRESS,
-        EMERGENCY_CONTACT_PERSON,EMERGENCY_CONTACT_PHONE,ENTRY_DATE,DATE_OF_RESIGNATION,REMARK,USER_NAME
+        user.ID,user.USER_NAME,user.JOB_NUMBER,DATE_OF_BIRTH,SEX,AGE,IDENTITY_CARD,WECHAT,REGISTERED_RESIDENCE,MOBILE_PHONE,EMAIL,HOME_ADDRESS,
+        EMERGENCY_CONTACT_PERSON,EMERGENCY_CONTACT_PHONE,ENTRY_DATE,DATE_OF_RESIGNATION,REMARK
     </sql>
 
     <select id="queryUserDetail" resultType="com.example.bishe.entity.personalmanagement.UserDetail">
@@ -12,10 +17,10 @@
         <include refid="UserDetailList"/>
         from user_detail ud
         join user
-        WHERE ud.USER_ID = USER.userid
-        AND user.DELETED_FLAG = '1' and user.FREEZED_FLAG = '1'
+        WHERE ud.USER_ID = USER.id
+        AND user.DELETED_FLAG = '1' AND user.FREEZED_FLAG = '1'
         <if test="userQueryCondition.jobNumber != null and userQueryCondition.jobNumber != ''">
-            AND ud.JOB_NUMBER LIKE CONCAT(CONCAT('%', #{userQueryCondition.jobNumber}), '%')
+            AND user.JOB_NUMBER LIKE CONCAT(CONCAT('%', #{userQueryCondition.jobNumber}), '%')
         </if>
         <if test="userQueryCondition.userName != null and userQueryCondition.userName != ''">
             AND ud.USER_NAME = #{ userQueryCondition.userName }
@@ -23,7 +28,7 @@
         <if test="userQueryCondition.mobilePhone != null and userQueryCondition.mobilePhone != ''">
             AND ud.MOBILE_PHONE LIKE CONCAT(CONCAT('%', #{userQueryCondition.mobilePhone}), '%')
         </if>
-        ORDER BY ud.JOB_NUMBER DESC
+        ORDER BY user.JOB_NUMBER DESC
         <if test="userQueryCondition.start != null and userQueryCondition.limit != null and userQueryCondition.limit > 0">
             limit #{userQueryCondition.start},#{userQueryCondition.limit}
         </if>
@@ -33,10 +38,10 @@
         select  count(*) count
         from user_detail ud
         join user
-        WHERE ud.USER_ID = USER.userid
+        WHERE ud.USER_ID = USER.id
         AND user.DELETED_FLAG = '1' and user.FREEZED_FLAG = '1'
         <if test="userQueryCondition.jobNumber != null and userQueryCondition.jobNumber != ''">
-            AND ud.JOB_NUMBER LIKE CONCAT(CONCAT('%', #{userQueryCondition.jobNumber}), '%')
+            AND user.JOB_NUMBER LIKE CONCAT(CONCAT('%', #{userQueryCondition.jobNumber}), '%')
         </if>
         <if test="userQueryCondition.userName != null and userQueryCondition.userName != ''">
             AND ud.USER_NAME = #{ userQueryCondition.userName }
@@ -48,28 +53,87 @@
 
 
     <!--删除用户-->
-    <update id="deleteUserDetail">
+    <update id="deleteUser">
         UPDATE user
         SET DELETED_FLAG = '0'
-        where userid = #{id}
+        where id = #{id}
+    </update>
+
+    <!--删除用户详情-->
+    <update id="deleteUserDetail">
+        UPDATE user_detail
+        SET DELETED_FLAG = '0'
+        where USER_ID = #{id}
     </update>
 
     <!--冻结用户-->
     <update id="freezeUserDetail">
         UPDATE user
         SET FREEZED_FLAG = '0'
-        where userid = #{id}
+        where id = #{id}
+    </update>
+
+    <!--冻结用户详细信息-->
+    <update id="freezeUser">
+        UPDATE user_detail
+        SET FREEZED_FLAG = '0'
+        where USER_ID = #{id}
+    </update>
+
+    <insert id="createUser" parameterType="com.example.bishe.entity.login.User">
+        insert into user (USER_NAME,JOB_NUMBER,PASSWORD,SALT)
+        values (#{user.userName},#{user.jobNumber},#{user.password},#{user.salt});
+    </insert>
+    
+    <update id="updateUser" parameterType="com.example.bishe.entity.login.User">
+        UPDATE user
+        <trim prefix="set" suffixOverrides=",">
+            <if test='user.userName != null and user.userName != "" '>
+                USER_NAME = #{user.userName},
+            </if>
+            <if test='user.password != null and user.password != "" '>
+                PASSWORD = #{user.password},
+            </if>
+            <if test='user.salt != null and user.salt != "" '>
+                SALT = #{user.salt},
+            </if>
+        </trim>
+        WHERE ID=#{id}
+    </update>
+
+    <insert id="assignPosition" parameterType="com.example.bishe.entity.login.UserRole">
+        insert into user_role (USERID,ROLEID)
+        values (#{userRole.userid},#{userRole.userid});
+    </insert>
+
+    <update id="updatePosition" parameterType="com.example.bishe.entity.login.UserRole">
+        UPDATE user_role SET ROLEID = #{userRole.roleid}
+        WHERE USERID = #{userRole.userid}
+    </update>
+
+
+    <insert id="assignPermissions">
+        insert into role_permission
+        (
+        ROLEID,PERMISSIONID
+        )
+        values
+        <foreach collection="rolePermissionList" item="item" separator=",">
+            (
+            #{ item.roleid },#{ item.permissionid }
+            )
+        </foreach>
+    </insert>
+
+    <update id="deletePermissions" parameterType="com.example.bishe.entity.login.UserRole">
+        UPDATE role_permission
+        SET DELETED_FLAG = '0'
+        WHERE roleid = #{id}
     </update>
 
     <insert id="addUserDetail" parameterType="com.example.bishe.entity.personalmanagement.UserDetail">
         insert into user_detail
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test='userDetail.userName != null and userDetail.userName != "" '>
-                USER_NAME,
-            </if>
-            <if test='userDetail.jobNumber != null and userDetail.jobNumber != "" '>
-                JOB_NUMBER,
-            </if>
             <if test='userDetail.dateOfBirth != null '>
                 DATE_OF_BIRTH,
             </if>
@@ -117,12 +181,6 @@
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test='userDetail.userName != null and userDetail.userName != "" '>
-                #{userDetail.userName},
-            </if>
-            <if test='userDetail.jobNumber != null and userDetail.jobNumber != "" '>
-                #{userDetail.jobNumber},
-            </if>
             <if test='userDetail.dateOfBirth != null '>
                 #{userDetail.dateOfBirth},
             </if>
@@ -175,13 +233,7 @@
     <update id="updateUserDetail" parameterType="com.example.bishe.entity.personalmanagement.UserDetail">
         UPDATE user_detail
         <trim prefix="set" suffixOverrides=",">
-            <if test='userDetail.jobNumber != null and userDetail.jobNumber != "" '>
-                JOB_NUMBER = #{userDetail.jobNumber},
-            </if>
-            <if test='userDetail.userName != null and userDetail.userName != "" '>
-                USER_NAME = #{userDetail.userName},
-            </if>
-            <if test='userDetail.dateOfBirth != null '>
+            <if test='userDetail.dateOfBirth != null and userDetail.dateOfBirth != "" '>
                 DATE_OF_BIRTH = #{userDetail.dateOfBirth},
             </if>
             <if test='userDetail.sex != null and userDetail.sex != "" '>
@@ -230,33 +282,47 @@
         WHERE USER_ID=#{id}
     </update>
 
-
-
     <select id="judgeUserExistence" resultType="java.lang.Integer">
         SELECT count(*) count
         FROM user
         WHERE DELETED_FLAG = '1' AND FREEZED_FLAG = '1'
         <if test="id != null and id != ''">
-            AND userid = #{id}
+            AND ID = #{id}
         </if>
     </select>
 
+    <select id="judgeUserDetailExistence" resultType="java.lang.Integer">
+        SELECT count(*) count
+        FROM user_detail
+        WHERE DELETED_FLAG = '1' AND FREEZED_FLAG = '1'
+        <if test="id != null and id != ''">
+            AND USER_ID = #{id}
+        </if>
+    </select>
 
-    <select id="queryUserDetailTest" resultType="com.example.bishe.entity.personalmanagement.UserDetail">
-        select
-        <include refid="UserDetailList"/>
-        from user_detail ud
-        join user
-        WHERE ud.USER_ID = USER.userid
-        AND user.DELETED_FLAG = '1' and user.FREEZED_FLAG = '1'
+    <select id="judgePositionExistence" resultType="java.lang.Integer">
+        SELECT count(*) count
+        FROM user_role
+        WHERE DELETED_FLAG = '1' AND FREEZED_FLAG = '1'
+        <if test="id != null and id != ''">
+            AND USERID = #{id}
+        </if>
+    </select>
 
+    <select id="judgePermissionsExistence" resultType="java.lang.Integer">
+        SELECT count(*) count
+        FROM role_permission
+        WHERE DELETED_FLAG = '1' AND FREEZED_FLAG = '1'
+        <if test="id != null and id != ''">
+            AND ROLEID = #{id}
+        </if>
     </select>
 
     <select id="selectUserCountTest" resultType="java.lang.Integer">
         select  count(*) count
         from user_detail ud
         join user
-        WHERE ud.USER_ID = USER.userid
+        WHERE ud.USER_ID = USER.id
         AND user.DELETED_FLAG = '1' and user.FREEZED_FLAG = '1'
 
     </select>
@@ -266,7 +332,7 @@
         <include refid="UserDetailList"/>
         from user_detail ud
         join user
-        WHERE ud.USER_ID = USER.userid
+        WHERE ud.USER_ID = USER.id
         AND user.DELETED_FLAG = '1' and user.FREEZED_FLAG = '1'
         order by rand() limit 1;
     </select>

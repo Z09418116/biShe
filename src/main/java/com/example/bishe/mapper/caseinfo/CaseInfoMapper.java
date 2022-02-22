@@ -59,6 +59,14 @@ public interface CaseInfoMapper {
     Boolean freezeCaseInfo(Long id);
 
     /**
+     * 冻结案件信息
+     *
+     * @param id 案件id
+     * @return  是否成功
+     */
+    Boolean changeCaseInfoStatus(@Param("id") Long id, @Param("state") Integer state);
+
+    /**
      * 修改案件信息
      *
      * @param caseInfo 案件信息实体类,id 案件id

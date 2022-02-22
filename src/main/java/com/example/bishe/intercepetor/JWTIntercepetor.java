@@ -5,8 +5,12 @@ import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.example.bishe.utils.JWTutil;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.shiro.web.util.WebUtils;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
@@ -18,6 +22,12 @@ public class JWTIntercepetor implements HandlerInterceptor  {
     //JWT拦截器,所有请求都被这个拦截器拦截,校验header中的token,token校验通过再放行
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Headers", "Content-Type,Content-Length, Authorization, Accept,X-Requested-With");
+        response.setHeader("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
+        response.setHeader("X-Powered-By","Jetty");
+
+
         //1.token一般存放在 header 中,所以从 request.getHeader()中获取 token
         String token = request.getHeader(TOKEN_NAME);
         Map<String,Object> map = new HashMap<String, Object>();
@@ -40,4 +50,7 @@ public class JWTIntercepetor implements HandlerInterceptor  {
         response.getWriter().println(msg);
         return false;
     }
+
+
+
 }

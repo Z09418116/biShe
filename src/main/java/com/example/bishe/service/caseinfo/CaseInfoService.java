@@ -49,15 +49,9 @@ public interface CaseInfoService {
      * @param id 案件id state 状态
      * @return  是否成功
      */
-    Boolean modifyCaseInfo(Long id,Integer state);
+    ReturnInfo changeCaseInfoStatus(Long id,Integer state);
 
-    /**
-     * 导入案件信息
-     *
-     * @param restaurantInfoList 案件信息列表
-     * @return  是否成功
-     */
-    ReturnInfo importCaseInfo(List<RestaurantInfo> restaurantInfoList);
+
 
     /**
      * 上传案件信息附件

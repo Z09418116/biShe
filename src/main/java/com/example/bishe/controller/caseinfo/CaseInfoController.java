@@ -14,6 +14,7 @@ import com.example.bishe.service.caseinfo.impl.CaseInfoServiceImpl;
 import com.example.bishe.service.restaurant.impl.RestaurantServiceImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.models.auth.In;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -85,7 +86,7 @@ public class CaseInfoController {
      * @return JsonResponseVO实体类
      */
     @RequestMapping("/delete")
-    public JsonResponseVO deleteUserDetail(Long id) {
+    public JsonResponseVO deleteCaseInfoDetail(Long id) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("案件信息-删除-impl,id:{}",id);
         }
@@ -103,7 +104,7 @@ public class CaseInfoController {
      * @return JsonResponseVO实体类
      */
     @RequestMapping("/freeze")
-    public JsonResponseVO freezeUserDetail(Long id) {
+    public JsonResponseVO freezeCaseInfoDetail(Long id) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("人员管理-冻结案件信息-impl,id:{}",id);
         }
@@ -141,4 +142,23 @@ public class CaseInfoController {
         result.put(RESPONSE_RECORD_PARAM, reason);
         return result;
     }
+
+    /**
+     * 修改案件状态
+     *
+     * @param id 案件id status 案件状态(1-通过 2-不通过)
+     * @return JsonResponseVO实体类
+     */
+    @RequestMapping("/changeCaseInfoStatus")
+    public JsonResponseVO changeCaseInfoStatus(Long id, Integer state) {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("人员管理-修改案件状态-impl,id:{},status:{}",id,state);
+        }
+        final JsonResponseVO vo = new JsonResponseVO();
+        //冻结案件信息
+        ReturnInfo returnInfo = caseInfoServiceImpl.changeCaseInfoStatus(id,state);
+        BeanUtils.copyProperties(returnInfo,vo);
+        return vo;
+    }
+
 }

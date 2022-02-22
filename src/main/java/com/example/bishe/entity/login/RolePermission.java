@@ -19,9 +19,21 @@ public class RolePermission implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 权限id
+     */
     private Integer permissionid;
 
+    /**
+     * 职位id
+     */
     private Integer roleid;
+
+    /**
+     * 权限id列表
+     */
+    private Integer permissionidList;
+
 
 
 }

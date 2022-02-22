@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.bishe.mapper.login.MenuMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.bishe.entity.login.Menu">
+        <id column="ID" property="id"></id>
+        <result column="URL" property="url"></result>
+        <result column="PATH" property="path"></result>
+        <result column="COMPONENT" property="component"></result>
+        <result column="NAME" property="name"></result>
+        <result column="ICON_CLS" property="iconCls"></result>
+        <result column="KEEP_ACTIVE" property="keepActive"></result>
+        <result column="REQUIRE_AUTH" property="requireAuth"></result>
+        <result column="PARENT_ID" property="parentId"></result>
+        <result column="ENABLED" property="enabled"></result>
+    </resultMap>
+
+    <resultMap id="Menus" type="com.example.bishe.entity.login.Menu" extends="BaseResultMap">
+        <collection property="children" ofType="com.example.bishe.entity.login.Menu">
+                <id column="ID2" property="id"></id>
+                <result column="URL2" property="url"></result>
+                <result column="PATH2" property="path"></result>
+                <result column="COMPONENT2" property="component"></result>
+                <result column="NAME2" property="name"></result>
+                <result column="ICON_CLS2" property="iconCls"></result>
+                <result column="KEEP_ACTIVE2" property="keepActive"></result>
+                <result column="REQUIRE_AUTH2" property="requireAuth"></result>
+                <result column="PARENT_ID2" property="parentId"></result>
+                <result column="ENABLED2" property="enabled"></result>
+
+        </collection>
+    </resultMap>
+
+    <resultMap id="MenusWithRole" type="com.example.bishe.entity.login.Menu" extends="BaseResultMap">
+        <collection property="roles" ofType="com.example.bishe.entity.login.Role">
+            <id column="rid" property="roleid"></id>
+            <result column="rrole" property="role"></result>
+            <result column="rdescription" property="roleDescription"></result>
+        </collection>
+
+    </resultMap>
+
+    <select id="getMenusByAdminId" resultMap="Menus">
+        SELECT DISTINCT
+            m1.*, m2.ID AS ID2,
+            m2.URL AS URL2,
+            m2.PATH AS PATH2,
+            m2.COMPONENT AS COMPONENT2,
+            m2.`NAME` AS NAME2,
+            m2.ICON_CLS AS ICON_CLS2,
+            m2.KEEP_ACTIVE AS KEEP_ACTIVE2,
+            m2.REQUIRE_AUTH AS REQUIRE_AUTH2,
+            m2.PARENT_ID AS PARENT_ID2,
+            m2.ENABLED AS ENABLED2
+        FROM
+            menu m1,
+            menu m2,
+            user_role ur,
+            role_menu rm
+        WHERE
+            m1.ID = m2.PARENT_ID
+          AND m2.id = rm.MID
+          AND rm.rid = ur.ROLEID
+          AND ur.USERID = #{id}
+          AND m2.ENABLED = 1
+        ORDER BY
+            m2.ID
+    </select>
+
+
+    <!--根据角色获取菜单列表-->
+    <select id="getMenusWithRole" resultMap="MenusWithRole">
+        SELECT
+            m.*, r.roleid AS rid,
+            r.ROLE AS rrole,
+            r.ROLE_DESCRIPTION rdescription
+        FROM
+            menu m,
+            role_menu rm,
+            role r
+        WHERE
+            m.ID = rm.MID
+          AND r.roleid = rm.RID
+        ORDER BY
+            m.ID
+    </select>
+
+
+</mapper>

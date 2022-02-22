@@ -192,14 +192,22 @@
     <update id="deleteCaseInfo" >
         UPDATE caseinfo
         SET DELETED_FLAG = '0'
-        where ID = #{id}
+        WHERE ID = #{id}
     </update>
 
     <!--删除案件信息-->
     <update id="freezeCaseInfo" >
         UPDATE caseinfo
         SET FREEZED_FLAG = '0'
-        where ID = #{id}
+        WHERE ID = #{id}
+    </update>
+
+    <!--修改案件状态-->
+    <update id="changeCaseInfoStatus">
+        UPDATE caseinfo
+        SET CASE_STATE = #{state}
+        WHERE ID = #{id}
+        AND DELETED_FLAG = '1' AND FREEZED_FLAG = '1'
     </update>
 
     <insert id="addCaseInfoEnclosure">
@@ -217,9 +225,9 @@
 
     <!--清除所有关联图片附件-->
     <update id="cleanCaseInfoEnclosure">
-        update case_enclosure set
+        update case_enclosure SET
             DELETED_FLAG ='0'
-        where DELETED_FLAG = '1' and CASE_ID = #{ id }
+        WHERE DELETED_FLAG = '1' AND CASE_ID = #{ id }
     </update>
 
 

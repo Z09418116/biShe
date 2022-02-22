@@ -21,15 +21,32 @@ public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "userid", type = IdType.AUTO)
-    private Integer userid;
+    /**
+     * 用户id
+     */
+    @TableId(value = "id", type = IdType.AUTO)
+    private Integer id;
 
-    private String username;
+    /**
+     * 工号
+     */
+    private String jobNumber;
 
+    /**
+     * 用户姓名
+     */
+    private String userName;
+
+    /**
+     * 密码
+     */
     private String password;
 
+    /**
+     * 盐值
+     */
     private String salt;
 
-    private Integer status;
+
 
 }

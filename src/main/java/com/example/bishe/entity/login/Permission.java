@@ -13,7 +13,7 @@ import java.io.Serializable;
  * </p>
  *
  * @author ${author}
- * @since 2021-04-20
+ * @since
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -22,7 +22,15 @@ public class Permission implements Serializable {
     private static final long serialVersionUID = 1L;
     @TableId(value = "permissionid", type = IdType.AUTO)
     private Integer permissionid;
-    private String url; //接口路径
-    private String perm; //权限字符串
+
+    /**
+     * 接口路径
+     */
+    private String url;
+
+    /**
+     * 权限字符串
+     */
+    private String perm;
 
 }

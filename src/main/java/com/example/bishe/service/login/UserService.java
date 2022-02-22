@@ -20,13 +20,13 @@ import java.util.List;
  */
 public interface UserService extends IService<User> {
 
-    String login(String username, String password, String code, HttpSession session, HttpServletResponse response, Model model);
+    String login(String jobNumber, String password, String code, HttpSession session, HttpServletResponse response, Model model);
 
-    User getUserByUserName(String username);
+    User getUserByUserName(String jobNumber);
 
-    List<Permission> getUserPermissionsByUserId(Integer userId);
+    List<Permission> getUserPermissionsByUserId(Integer id);
 
-    List<Role> getUserRoleByUserId(Integer userId);
+    List<Role> getUserRoleByUserId(Integer id);
 
     Integer add(User user);
     String logout();

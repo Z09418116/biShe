@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author ${author}
@@ -19,8 +19,14 @@ public class UserRole implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 用户id
+     */
     private Integer userid;
 
+    /**
+     * 职位id
+     */
     private Integer roleid;
 
 

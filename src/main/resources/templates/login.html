@@ -8,25 +8,25 @@
 <body>
 <h3 style="color: red" th:text="${msg}"/>
 <div>
-    账号: <input type="text" name="username" id="username"> <br/>
+    账号: <input type="text" name="jobNumber" id="jobNumber"> <br/>
     密码: <input type="password" name="password" id="password"> <br/>
-    验证码: <input type="text" name="code" id="code"><img id="changeImg" src="/getAuthCode" alt=""><br/>
+<!--    验证码: <input type="text" name="code" id="code"><img id="changeImg" src="/getAuthCode" alt=""><br/>-->
     <button id="loginBtn">登陆</button>
 </div>
 <script>
 
     $(function () {
         //点击更换验证码   拼接随机数
-        $("#changeImg").click(function(){
-            $("#changeImg").attr('src',"/getAuthCode?d="+Math.random());
-        });
+        // $("#changeImg").click(function(){
+        //     $("#changeImg").attr('src',"/getAuthCode?d="+Math.random());
+        // });
         $('#loginBtn').click(function () {
-            let username = $('#username').val()
+            let jobNumber = $('#jobNumber').val()
             let password = $('#password').val()
-            let code = $('#code').val()
+            // let code = $('#code').val()
             $.ajax({
                 url:"/user/login",
-                data:{"username":username,"password":password,"code":code},
+                data:{"jobNumber":jobNumber,"password":password},
                 method:"POST",
                 success: function (data) {
                     window.localStorage.setItem("token",data.token)

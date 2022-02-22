@@ -1,6 +1,8 @@
 package com.example.bishe.controller.login;
 
 
+import com.example.bishe.config.base.JsonResponseVO;
+import com.example.bishe.entity.login.LoginForm;
 import com.example.bishe.entity.login.User;
 import com.example.bishe.service.login.UserService;
 import com.example.bishe.service.login.impl.UserServiceImpl;
@@ -9,6 +11,7 @@ import org.apache.shiro.crypto.hash.Md5Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.spring.web.json.Json;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -47,6 +50,7 @@ public class UserController {
         return userServiceImpl.add(user);
     }
 
+
     @GetMapping("/update")
     public String toUserUpdate(){
         return "user/update";
@@ -59,12 +63,16 @@ public class UserController {
 
     @PostMapping("/login")
     @ResponseBody
-    public Map<String,String> login(String username, String password, String code,
-                     HttpSession session, HttpServletResponse response, Model model) {
+    public JsonResponseVO login(@RequestBody LoginForm loginForm, String code,
+                                HttpSession session, HttpServletResponse response, Model model) {
         Map<String,String> map = new HashMap<String, String>();
-        map.put("url",userService.login(username,password,code,session,response,model));
+        map.put("url",userService.login(loginForm.getJobNumber(),loginForm.getPassword(),code,session,response,model));
         map.put("token",response.getHeader("token"));
-        return map;
+        JsonResponseVO jsonResponseVO = new JsonResponseVO();
+        jsonResponseVO.setCode(200);
+        jsonResponseVO.setMessage("登录成功");
+        jsonResponseVO.setObj(map);
+        return jsonResponseVO;
     }
 
 }

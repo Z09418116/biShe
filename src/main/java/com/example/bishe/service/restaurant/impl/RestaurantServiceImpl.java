@@ -158,11 +158,10 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public JsonResponseVO importRestaurant(MultipartFile file, String userName) {
-        final JsonResponseVO jsonResponseVO = new JsonResponseVO();
+        JsonResponseVO jsonResponseVO = new JsonResponseVO();
         InputStream in = null;
         if (file.isEmpty()) {
-            jsonResponseVO.setSuccess(Boolean.FALSE);
-            jsonResponseVO.setReason("表格为空，请重新上传excel");
+            jsonResponseVO.error("表格为空，请重新上传excel");
             return jsonResponseVO;
         }
         //导入月报
@@ -262,7 +261,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
                 restaurantMapper.addRestaurant(realEntity);
             }
-            jsonResponseVO.setReason("导入成功!");
+            jsonResponseVO.success("导入成功!");
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             throw new ImportArrayException(e);

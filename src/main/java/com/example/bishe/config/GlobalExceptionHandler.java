@@ -30,8 +30,8 @@ public class GlobalExceptionHandler {
     public JsonResponseVO handleImportException(ImportException e) {
         LOGGER.error(e.getMessage(), e);
         final JsonResponseVO result = new JsonResponseVO();
-        result.setSuccess(Boolean.FALSE);
-        result.setReason(e.getMessage());
+        result.setCode(500);
+        result.setMessage(e.getMessage());
         return result;
     }
 
@@ -45,10 +45,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RestaurantException.class)
     public JsonResponseVO handleImportException(RestaurantException e) {
         LOGGER.error(e.getMessage(), e);
-        final JsonResponseVO result = new JsonResponseVO();
-        result.setSuccess(Boolean.FALSE);
-        result.setSuccess(Boolean.TRUE);
-        result.setReason(e.getMessage());
+        final JsonResponseVO result = JsonResponseVO.error(e.getMessage());
         return result;
     }
 }
